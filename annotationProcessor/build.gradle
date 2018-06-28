@@ -1,0 +1,12 @@
+apply plugin: 'java-library'
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation project(":annotation")
+    api "dom4j:dom4j:1.6.1"
+    api 'commons-lang:commons-lang:2.6'
+
+}
+
+sourceCompatibility = "7"
+targetCompatibility = "7"
