@@ -2,9 +2,10 @@ package com.denny.annotationprocessor;
 
 import com.denny.annotation.Activity;
 import com.denny.annotation.Application;
-import com.denny.annotationprocessor.model.ActivityElement;
-import com.denny.annotation.Android;
-import com.denny.annotationprocessor.model.ApplicationElement;
+import com.denny.annotation.ExtendsFrom;
+import com.denny.annotation.Provider;
+import com.denny.annotation.Receiver;
+import com.denny.annotation.Service;
 
 import java.io.IOException;
 import java.util.HashSet;
@@ -20,7 +21,6 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.util.Elements;
 import javax.tools.Diagnostic;
-import javax.tools.DocumentationTool;
 import javax.tools.FileObject;
 import javax.tools.StandardLocation;
 
@@ -37,28 +37,30 @@ public class AutoManifestProcessor extends AbstractProcessor {
         mMessager = processingEnvironment.getMessager();
         mFiler = processingEnvironment.getFiler();
         mElemUtils = processingEnvironment.getElementUtils();
-        Utils.init(mElemUtils);
     }
 
     @Override
     public boolean process(Set<? extends TypeElement> set, RoundEnvironment roundEnvironment) {
         AndroidManifest manifest = prepareManifest();
+        AnnotationParser parser = new AnnotationParser(mElemUtils, new TypeChecker(mElemUtils), new Validator());
 
         Set<? extends Element> appSet = roundEnvironment.getElementsAnnotatedWith(Application.class);
         if (appSet.size() > 1) {
             throw new IllegalArgumentException("application annotation more than 1");
         } else if(!appSet.isEmpty()) {
             Element app = appSet.iterator().next();
-            Utils.checkApplication(app);
-            manifest.setApplication(new ApplicationElement(app.toString(), app.getAnnotation(Application.class)));
+            manifest.setApplication(parser.parse(app, Application.class));
         }
 
         for (Element ele : roundEnvironment.getElementsAnnotatedWith(Activity.class)) {
-            Utils.checkActivity(ele);
-            manifest.addComponent(new ActivityElement(ele.toString(), ele.getAnnotation(Activity.class)));
+            org.dom4j.Element activity = parser.parse(ele, Activity.class);
+            Activity.Main isMain = ele.getAnnotation(Activity.Main.class);
+            if (isMain != null) {
+                activity.add(parser.addMainInterFilter());
+            }
+            manifest.addToApplication(activity);
         }
 
-        parseActivity(manifest);
         message(mOut.toUri().toString());
         try {
             manifest.writeTo(mOut);
@@ -66,10 +68,6 @@ public class AutoManifestProcessor extends AbstractProcessor {
             e.printStackTrace();
         }
         return true;
-    }
-
-    private void parseActivity(AndroidManifest manifest) {
-
     }
 
     private AndroidManifest prepareManifest() {
@@ -86,7 +84,11 @@ public class AutoManifestProcessor extends AbstractProcessor {
     public Set<String> getSupportedAnnotationTypes() {
         Set<String> set = new HashSet<>(super.getSupportedAnnotationTypes());
         set.add(Application.class.getName());
-        set.add(Android.class.getName());
+        set.add(Activity.class.getName());
+        set.add(Service.class.getName());
+        set.add(Receiver.class.getName());
+        set.add(Provider.class.getName());
+        set.add(Activity.Main.class.getName());
         return set;
     }
 

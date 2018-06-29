@@ -16,7 +16,7 @@ public class ManifestElement extends BaseElement {
     public Element toElement() {
         Element root = super.toElement();
         root.add(ANDROID);
-        root.addAttribute("package", "");
+        root.addAttribute("package", "com.denny.automanifest");
         return root;
     }
 }

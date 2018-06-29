@@ -7,5 +7,5 @@ import android.app.Application;
  */
 @com.denny.annotation.Application(icon = "@mipmap/ic_launcher", label = "@string/app_name",
 theme = "@style/AppTheme")
-public class AutoApplication extends Object {
+public class AutoApplication extends Application {
 }

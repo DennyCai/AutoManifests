@@ -6,5 +6,15 @@ package com.denny.annotation;
 public interface Define {
 
     String Null = "";
-    int NoId = -1;
+
+    String APPLICATION = "android.app.Application";
+    String PROVIDER = "android.content.ContentProvider";
+    String SERVICE = "android.app.Service";
+    String RECEIVER = "android.content.BroadcastReceiver";
+
+    interface Activity {
+        String APP = "android.app.Activity";
+        String APPCOMPAT = "android.support.v7.app.AppCompatActivity";
+    }
+
 }

@@ -6,9 +6,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Created by caidong on 2018/6/27.
+ * Created by caidong on 2018/6/28.
  */
-@Target(ElementType.METHOD)
 @Retention(RetentionPolicy.SOURCE)
-public @interface BooleanType {
+@Target({ElementType.ANNOTATION_TYPE})
+public @interface ExtendsFrom {
+
+    String[] value();
 }

@@ -4,7 +4,7 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation project(":annotation")
     api "dom4j:dom4j:1.6.1"
-    api 'commons-lang:commons-lang:2.6'
+    api 'org.apache.commons:commons-lang3:3.7'
 
 }
 

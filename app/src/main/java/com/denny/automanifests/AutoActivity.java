@@ -7,7 +7,7 @@ import com.denny.annotation.Activity;
 /**
  * Created by caidong on 2018/6/25.
  */
-@Activity()
+@Activity
 public class AutoActivity extends AppCompatActivity {
 
 }

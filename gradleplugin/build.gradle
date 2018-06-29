@@ -1,0 +1,21 @@
+apply plugin: 'groovy'
+apply plugin: 'maven'
+
+dependencies {
+    compile gradleApi()
+    compile localGroovy()
+    compile 'com.android.tools.build:gradle:3.1.3'
+}
+
+group = 'com.denny.automanifest'
+version = '0.5'
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(url: uri('../plugins/repo/'))
+        }
+    }
+}
+sourceCompatibility = "7"
+targetCompatibility = "7"

@@ -3,22 +3,21 @@ package com.denny.annotation;
 /**
  * Created by caidong on 2018/6/26.
  */
+@ExtendsFrom({Define.Activity.APP, Define.Activity.APPCOMPAT})
 public @interface Activity {
-
-    boolean extend() default true;
 
     LaunchMode launchMode() default LaunchMode.None;
 
     String taskAffinity() default Define.Null;
 
-    @BooleanType
+    @Equals({ "true", "false"})
     String excludeFromRecents() default Define.Null;
 
     String theme() default Define.Null;
 
     String process() default Define.Null;
 
-    @BooleanType
+    @Equals({ "true", "false"})
     String noHistory() default Define.Null;
 
     String icon() default Define.Null;
@@ -27,18 +26,21 @@ public @interface Activity {
 
     String configChanges() default Define.Null;
 
-    @BooleanType
+    @Equals({ "true", "false"})
     String hardwareAccelerated() default Define.Null;
 
     String label() default Define.Null;
 
-    @BooleanType
+    @Equals({ "true", "false"})
     String exported() default Define.Null;
 
     String screenOrientation() default Define.Null;
 
     String windowSoftInputMode() default Define.Null;
 
-    @BooleanType
-    String enable();
+    @Equals({ "true", "false"})
+    String enable() default Define.Null;
+
+    @interface Main {
+    }
 }

@@ -10,6 +10,7 @@ import java.lang.annotation.Target;
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.SOURCE)
+@ExtendsFrom({Define.APPLICATION})
 public @interface Application {
 
     String icon();
@@ -20,12 +21,12 @@ public @interface Application {
 
     String roundIcon() default Define.Null;
 
-    @BooleanType
+    @Equals({ "true", "false"})
     String allowBackup() default Define.Null;
 
-    @BooleanType
+    @Equals({ "true", "false"})
     String largeHeap() default Define.Null;
 
-    @BooleanType
+    @Equals({ "true", "false"})
     String supportsRtl() default Define.Null;
 }

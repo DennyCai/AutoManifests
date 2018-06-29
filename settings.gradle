@@ -1,1 +1,1 @@
-include ':app', ':annotationProcessor', ':annotation', ':autoManifest'
+include ':app', ':annotationProcessor', ':annotation', ':autoManifest', ':gradleplugin'
