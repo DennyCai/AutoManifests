@@ -10,7 +10,7 @@ import org.dom4j.Namespace;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 
-import java.io.IOException;
+import java.io.Writer;
 import java.util.Iterator;
 
 import javax.tools.FileObject;
@@ -39,28 +39,33 @@ class AndroidManifest {
     }
 
     public void setApplication(Element element) {
-//        Element app = element;
-//        Iterator<Attribute> attrs = app.attributeIterator();
-//        while (attrs.hasNext()) {
-//            Attribute attr = attrs.next();
-//            attr.setParent(null);
-//            mApplication.add(attr);
-//        }
+        Element app = element;
+        Iterator<Attribute> attrs = app.attributeIterator();
+        while (attrs.hasNext()) {
+            Attribute attr = attrs.next();
+            attr.setParent(null);
+            mApplication.add(attr);
+        }
     }
 
     public void addToApplication(Element element) {
         mApplication.add(element);
     }
 
-    public void writeTo(FileObject out) throws IOException {
+    public void writeTo(FileObject out) {
         OutputFormat prettyFormat = OutputFormat.createPrettyPrint();
         prettyFormat.setEncoding("UTF-8");
         prettyFormat.setSuppressDeclaration(true);
-        XMLWriter xmlWriter = new XMLWriter(out.openWriter(), prettyFormat);
 
-        mRoot.add(mApplication);
-        mManifest.add(mRoot);
-        xmlWriter.write(mManifest);
-        xmlWriter.close();
+        XMLWriter xmlWriter = null;
+        try (Writer writer = out.openWriter()){
+            xmlWriter = new XMLWriter(writer, prettyFormat);
+            mRoot.add(mApplication);
+            mManifest.add(mRoot);
+            xmlWriter.write(mManifest);
+        } catch (Exception e) {
+            out.delete();
+            e.printStackTrace();
+        }
     }
 }
