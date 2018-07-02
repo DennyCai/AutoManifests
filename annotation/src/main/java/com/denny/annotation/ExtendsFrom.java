@@ -8,8 +8,8 @@ import java.lang.annotation.Target;
 /**
  * Created by caidong on 2018/6/28.
  */
-@Retention(RetentionPolicy.SOURCE)
-@Target({ElementType.ANNOTATION_TYPE})
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.ANNOTATION_TYPE)
 public @interface ExtendsFrom {
 
     String[] value();
