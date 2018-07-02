@@ -62,11 +62,7 @@ public class AutoManifestProcessor extends AbstractProcessor {
         }
 
         message(mOut.toUri().toString());
-        try {
-            manifest.writeTo(mOut);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        manifest.writeTo(mOut);
         return true;
     }
 

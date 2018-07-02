@@ -1,15 +1,11 @@
 package com.denny.annotationprocessor;
 
-import com.denny.annotation.Activity;
-import com.denny.annotation.Application;
-import com.denny.annotation.Define;
-import com.denny.annotation.Provider;
-import com.denny.annotation.Receiver;
-import com.denny.annotation.Service;
+import com.denny.annotation.ExtendsFrom;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import java.lang.annotation.Annotation;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,11 +22,11 @@ public class TypeChecker {
     private Elements mUtils;
 
     static {
-        put(Application.class, Define.APPLICATION);
-        put(Activity.class, Define.Activity.APP, Define.Activity.APPCOMPAT);
-        put(Service.class, Define.SERVICE);
-        put(Receiver.class, Define.RECEIVER);
-        put(Provider.class, Define.PROVIDER);
+//        put(Application.class, Define.APPLICATION);
+//        put(Activity.class, Define.Activity.APP, Define.Activity.APPCOMPAT);
+//        put(Service.class, Define.SERVICE);
+//        put(Receiver.class, Define.RECEIVER);
+//        put(Provider.class, Define.PROVIDER);
     }
 
     public TypeChecker(Elements utils) {
@@ -42,9 +38,9 @@ public class TypeChecker {
     }
 
 
-    public void checkExtendsFrom(TypeElement type, Class<?> annClass) {
+    public void checkExtendsFrom(TypeElement type, Class<? extends Annotation> annClass) {
         TypeMirror superType = type.getSuperclass();
-        String[] supers = sClassSupers.get(annClass);
+        String[] supers = resolveSuperClasses(annClass);
         if (supers == null) {
             throw new UnsupportedOperationException("Annotation class " + annClass.toString());
         }
@@ -60,6 +56,15 @@ public class TypeChecker {
             superType = type.getSuperclass();
         }
         throwIllegal(type.toString(), supers);
+    }
+
+    private String[] resolveSuperClasses(Class<? extends Annotation> ann) {
+        String[] classes = null;
+        ExtendsFrom extendsFrom = ann.getAnnotation(ExtendsFrom.class);
+        if (extendsFrom != null) {
+            classes = extendsFrom.value();
+        }
+        return classes;
     }
 
     private void throwIllegal(String className, String[] supers) {

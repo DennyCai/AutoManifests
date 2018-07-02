@@ -1,14 +1,10 @@
 package com.denny.annotationprocessor;
 
 
-import com.denny.annotation.Define;
-import com.denny.annotation.ExtendsFrom;
-import com.denny.annotation.IntentFilter;
 import com.denny.annotationprocessor.model.KeyValue;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.dom4j.Attribute;
 import org.dom4j.DocumentHelper;
 import org.dom4j.QName;
 import org.dom4j.tree.DefaultAttribute;
@@ -21,7 +17,6 @@ import java.util.List;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.util.Elements;
-import javax.print.Doc;
 
 /**
  * Created by caidong on 2018/6/28.
@@ -81,7 +76,7 @@ public class AnnotationParser {
     }
 
 
-    protected void checkType(Element clzEle, Annotation annotation, Class<?> annClass) {
+    protected void checkType(Element clzEle, Annotation annotation, Class<? extends Annotation> annClass) {
         TypeElement type = mEleUtils.getTypeElement(clzEle.toString());
         mChecker.checkExtendsFrom(type, annClass);
     }
