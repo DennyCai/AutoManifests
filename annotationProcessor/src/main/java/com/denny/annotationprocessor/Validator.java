@@ -1,6 +1,8 @@
 package com.denny.annotationprocessor;
 
+import com.denny.annotation.Define;
 import com.denny.annotation.Equals;
+import com.denny.annotation.Ignore;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ClassUtils;
@@ -27,6 +29,8 @@ public class Validator {
                             String.format("Class %s Annotation %s attribute %s value %s not equal [%s]",
                                     annotatedClz, declaringClz.getName(), method.getName(), val, StringUtils.join(equals.value(), ',')));
                 }
+            } else if (ClassUtils.isAssignable(annotation.getClass(), Ignore.class)) {
+                return Define.Null;
             }
         }
         return val;

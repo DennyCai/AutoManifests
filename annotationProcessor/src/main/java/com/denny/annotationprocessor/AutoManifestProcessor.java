@@ -49,16 +49,21 @@ public class AutoManifestProcessor extends AbstractProcessor {
             throw new IllegalArgumentException("application annotation more than 1");
         } else if(!appSet.isEmpty()) {
             Element app = appSet.iterator().next();
-            manifest.setApplication(parser.parse(app, Application.class));
+            org.dom4j.Element element = parser.parse(app, Application.class);
+            if (element != null) {// if element == null will ignore
+                manifest.setApplication(element);
+            }
         }
 
         for (Element ele : roundEnvironment.getElementsAnnotatedWith(Activity.class)) {
             org.dom4j.Element activity = parser.parse(ele, Activity.class);
             Activity.Main isMain = ele.getAnnotation(Activity.Main.class);
-            if (isMain != null) {
+            if (activity!= null && isMain != null) {
                 activity.add(parser.addMainInterFilter());
             }
-            manifest.addToApplication(activity);
+            if (activity != null) {
+                manifest.addToApplication(activity);
+            }
         }
 
         message(mOut.toUri().toString());
