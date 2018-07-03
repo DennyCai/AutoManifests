@@ -41,6 +41,11 @@ public @interface Activity {
     @Equals({ "true", "false"})
     String enable() default Define.Null;
 
+    String permission() default Define.Null;
+
+    @Ignore
+    boolean ignore() default false;
+
     @interface Main {
     }
 }
