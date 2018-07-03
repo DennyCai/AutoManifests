@@ -6,8 +6,9 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.lang.annotation.Annotation;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Collections;
+import java.util.Deque;
+import java.util.LinkedList;
 
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;
@@ -18,28 +19,16 @@ import javax.lang.model.util.Elements;
  */
 public class TypeChecker {
 
-    private static final Map<Class<?>, String[]> sClassSupers = new HashMap<>();
     private Elements mUtils;
-
-    static {
-//        put(Application.class, Define.APPLICATION);
-//        put(Activity.class, Define.Activity.APP, Define.Activity.APPCOMPAT);
-//        put(Service.class, Define.SERVICE);
-//        put(Receiver.class, Define.RECEIVER);
-//        put(Provider.class, Define.PROVIDER);
-    }
 
     public TypeChecker(Elements utils) {
         mUtils = utils;
     }
 
-    private static void put(Class<?> clz, String... clasNames) {
-        sClassSupers.put(clz, clasNames);
-    }
-
-
-    public void checkExtendsFrom(TypeElement type, Class<? extends Annotation> annClass) {
+    public Deque<TypeElement> checkExtendsFrom(TypeElement type, Class<? extends Annotation> annClass) {
         TypeMirror superType = type.getSuperclass();
+        Deque<TypeElement> extendLinked = new LinkedList<>();
+        extendLinked.add(type);
         String[] supers = resolveSuperClasses(annClass);
         if (supers == null) {
             throw new UnsupportedOperationException("Annotation class " + annClass.toString());
@@ -47,15 +36,17 @@ public class TypeChecker {
         while (superType != null) {
             String cls = superType.toString();
             if (ArrayUtils.contains(supers, cls)) {
-                return;
+                return extendLinked;
             }
             type = mUtils.getTypeElement(cls);
+            extendLinked.add(type);
             if (type == null) {
                 break;
             }
             superType = type.getSuperclass();
         }
         throwIllegal(type.toString(), supers);
+        return new LinkedList<>(Collections.<TypeElement>emptyList());
     }
 
     private String[] resolveSuperClasses(Class<? extends Annotation> ann) {

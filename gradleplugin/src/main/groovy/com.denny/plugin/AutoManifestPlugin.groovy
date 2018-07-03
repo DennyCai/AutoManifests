@@ -1,6 +1,7 @@
 package com.denny.plugin
 
 import com.android.build.gradle.api.ApplicationVariant
+import com.android.build.gradle.tasks.ProcessManifest
 import com.android.build.gradle.tasks.factory.AndroidJavaCompile
 import org.apache.commons.io.FileUtils
 import org.gradle.api.Plugin
@@ -31,13 +32,23 @@ class AutoManifestPlugin implements Plugin<Project> {
 
                 AndroidJavaCompile compile = variant.javaCompiler.asType(AndroidJavaCompile)
 
+                variantOutput.processManifest.doFirst {
+                    println "aapt:" + variantOutput.processManifest.aaptFriendlyManifestOutputFile
+                }
+                def processManifest = variantOutput.processManifest
+
                 MergeAutoManifestTask task = project.tasks.create("process${variantName}MergeAutoManifest", MergeAutoManifestTask)
                 task.group = GROUP_NAME
+//                task.processManifest = processManifest
                 task.autoManifest = FileUtils.getFile(compile.annotationProcessorOutputFolder, "AndroidManifest.xml")
                 task.sourceManifest = FileUtils.getFile(variantOutput.processManifest.manifestOutputDirectory, "AndroidManifest.xml")
                 task.reportFile = FileUtils.getFile(variantOutput.processManifest.reportFile.parentFile, "auto-manifest-report.txt")
                 task.outManifest = task.sourceManifest
-                task.mustRunAfter variantOutput.processManifest
+
+//                variant.packageApplication.doFirst {
+//                    println FileUtils.getFile(variant.packageApplication.manifests.files[0], "AndroidManifest.xml").text
+//                }
+                variant.packageApplication.dependsOn task
 
             }
         }
