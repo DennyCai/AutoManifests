@@ -4,6 +4,7 @@ import com.android.build.gradle.internal.LoggerWrapper
 import com.android.manifmerger.ManifestMerger2
 import com.android.manifmerger.MergingReport
 import org.apache.commons.io.FileUtils
+import org.codehaus.groovy.util.StringUtil
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
 
@@ -23,20 +24,23 @@ class MergeAutoManifestTask extends DefaultTask {
                     .setMergeReportFile(reportFile)
                     .withFeatures(ManifestMerger2.Invoker.Feature.NO_IMPLICIT_PERMISSION_ADDITION)
                     .merge()
+            if (result!= null && result.result.error) {
+                result.loggingRecords.each {
+                    println it.message
+                }
+                result.intermediaryStages.each {
+                    println it
+                }
+                throw new IllegalStateException()
+            }
             def str = result.getMergedDocument(MergingReport.MergedManifestKind.MERGED)
             backupManifest(outManifest)
-            outManifest.write(str)
+            if (str != null && !str.isEmpty()) {
+                outManifest.write(str)
+            }
         } catch (Exception e) {
             e.printStackTrace()
-        }
-        if (result!= null && result.result.error) {
-            result.loggingRecords.each {
-                it.message.println(System.err)
-            }
-            result.intermediaryStages.each {
-                it.println(System.err)
-            }
-            throw new IllegalStateException()
+            throw e
         }
 
     }

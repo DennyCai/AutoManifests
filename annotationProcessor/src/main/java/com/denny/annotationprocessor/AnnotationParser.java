@@ -91,7 +91,7 @@ public class AnnotationParser {
                     String firstSym = newVal.substring(0, 1);
                     switch (firstSym) {
                         case "+":
-                            val += newVal;
+                            val += newVal.substring(1);
                             break;
                         default:
                             val = newVal;
