@@ -39,17 +39,6 @@ class MergeAutoManifestTask extends DefaultTask {
             throw new IllegalStateException()
         }
 
-
-//        def xml = new XmlParser().parse(outManifest)
-//        Node app = xml.application[0]
-//        app.appendNode('meta-data', ['test':'test'])
-//
-//        outManifest.withPrintWriter {
-//            def printer = new XmlNodePrinter(it)
-//            printer.preserveWhitespace = true
-//            printer.print(xml)
-//        }
-
     }
 
     def backupManifest(File src) {
