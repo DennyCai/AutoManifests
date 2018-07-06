@@ -1,5 +1,6 @@
 package com.denny.plugin
 
+import com.android.SdkConstants
 import com.android.build.gradle.api.ApplicationVariant
 import com.android.build.gradle.tasks.ProcessManifest
 import com.android.build.gradle.tasks.factory.AndroidJavaCompile
@@ -36,19 +37,34 @@ class AutoManifestPlugin implements Plugin<Project> {
                     println "aapt:" + variantOutput.processManifest.aaptFriendlyManifestOutputFile
                 }
                 def processManifest = variantOutput.processManifest
+                def outManifest = variant.sourceSets.find { it.name.equals(SdkConstants.FD_MAIN)}.manifestFile
 
                 MergeAutoManifestTask task = project.tasks.create("process${variantName}MergeAutoManifest", MergeAutoManifestTask)
                 task.group = GROUP_NAME
 //                task.processManifest = processManifest
                 task.autoManifest = FileUtils.getFile(compile.annotationProcessorOutputFolder, "AndroidManifest.xml")
-                task.sourceManifest = FileUtils.getFile(variantOutput.processManifest.manifestOutputDirectory, "AndroidManifest.xml")
+                task.sourceManifest = outManifest//FileUtils.getFile(variantOutput.processManifest.manifestOutputDirectory, "AndroidManifest.xml")
                 task.reportFile = FileUtils.getFile(variantOutput.processManifest.reportFile.parentFile, "auto-manifest-report.txt")
-                task.outManifest = task.sourceManifest
+                task.outManifest = outManifest
+
+//                variantOutput.processManifest.finalizedBy task
+
+                def generate = project.tasks.create("generate${variantName}Manifest", GenerateManifestTask)
+                generate.group = GROUP_NAME
+                generate.dependsOn variant.javaCompiler
 
 //                variant.packageApplication.doFirst {
 //                    println FileUtils.getFile(variant.packageApplication.manifests.files[0], "AndroidManifest.xml").text
 //                }
-                variant.packageApplication.dependsOn task
+//                variantOutput.processManifest.finalizedBy(task)
+//                variantOutput.processManifest.doFirst {
+//                    variant.sourceSets.each {
+//                        it.javaDirectories.each {
+//                            println it.listFiles().inspect()
+//                        }
+//                    }
+//                }
+
 
             }
         }
